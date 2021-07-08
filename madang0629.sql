@@ -448,7 +448,7 @@ AND         b.publisher in(SELECT   b.publisher
                                                 WHERE   o.custid = c.custid
                                                 AND     c.name like '%¹ÚÁö¼º%'));
 --3-2
-SELECT      c.name, count(distinct b.publisher)
+SELECT      c.name
 FROM        customer c, book b, orders o
 WHERE       b.bookid = o.bookid
 AND         c.custid = o.custid

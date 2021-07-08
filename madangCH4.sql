@@ -271,4 +271,29 @@ AS                          SELECT  b.bookid, b.bookname, c.name, b.publisher
                             AND     o.bookid = b.bookid
                             AND     o.saleprice >= 20000;
                             
-                            
+CREATE  INDEX   ix_Book                            
+ON              book(bookname);
+
+CREATE  INDEX   ix_Book2
+ON              book(publisher,price);
+
+SELECT      *
+FROM        book
+WHERE       publisher='대한출판사'
+AND         price >= 30000;
+
+ALTER   INDEX   ix_Book REBUILD;
+
+DROP    INDEX   ix_BOOK;
+
+--13
+SELECT      name
+FROM        customer
+WHERE       name LIKE '박세리';
+
+CREATE  INDEX   ix_cus
+ON              customer(name);
+
+ALTER   INDEX   ix_cus REBUILD;
+
+DROP    INDEX   ix_cus;

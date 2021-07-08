@@ -1,5 +1,6 @@
 SET SERVEROUTPUT ON;
 
+--RECORD
 DECLARE
     TYPE REC_DEPT IS RECORD(
     DEPTNO NUMBER(2) NOT NULL := 99,
@@ -90,4 +91,142 @@ BEGIN
 END;
 /
 
+--COLLECTION
+DECLARE
+    TYPE ITAB_EX IS TABLE OF VARCHAR2(20)
+INDEX BY PLS_INTEGER;
 
+    text_arr ITAB_EX;
+
+BEGIN
+    text_arr(1) := '1st data';
+    text_arr(2) := '2nd data';
+    text_arr(3) := '3rd data';
+    text_arr(4) := '4th data'; --연관 배열에 값 넣기
+    
+    DBMS_OUTPUT.PUT_LINE('text_arr(1) : ' || text_arr(1));
+    DBMS_OUTPUT.PUT_LINE('text_arr(2) : ' || text_arr(2));
+    DBMS_OUTPUT.PUT_LINE('text_arr(3) : ' || text_arr(3));
+    DBMS_OUTPUT.PUT_LINE('text_arr(4) : ' || text_arr(4));
+END;
+/
+
+DECLARE
+    TYPE REC_DEPT IS RECORD(
+        deptno DEPT.DEPTNO%TYPE,
+        dname  DEPT.DNAME%TYPE
+        );
+   
+    TYPE ITAB_DEPT IS TABLE OF REC_DEPT
+        INDEX BY PLS_INTEGER; --배열 번호처럼 내가 타입을 정해주는 것 ex)1,2,3 A,B,C
+    
+    dept_arr ITAB_DEPT;
+    idx PLS_INTEGER := 0; 
+    
+BEGIN
+    FOR i IN (SELECT DEPTNO, DNAME FROM DEPT) LOOP
+    idx := idx + 1;
+    dept_arr(idx).deptno := i.DEPTNO;
+    dept_arr(idx).dname  := i.DNAME;
+    
+    DBMS_OUTPUT.PUT_LINE(
+        --dept_arr(idx) || ':' || 
+        dept_arr(idx).deptno || ':' || dept_arr(idx).dname);
+    END LOOP;
+END;
+/
+
+CL SCR
+
+DECLARE
+    TYPE ITAB_DEPT IS TABLE OF DEPT%ROWTYPE
+        INDEX BY PLS_INTEGER;
+    
+    dept_arr ITAB_DEPT;
+    idx PLS_INTEGER := 0;
+
+BEGIN
+    FOR i IN(SELECT * FROM DEPT) LOOP
+        idx := idx + 1;
+        dept_arr(idx).deptno := i.DEPTNO;
+        dept_arr(idx).dname  := i.DNAME;
+        dept_arr(idx).loc    := i.LOC;
+        
+        DBMS_OUTPUT.PUT_LINE(
+            dept_arr(idx).deptno || ':' ||
+            dept_arr(idx).dname  || ':' ||
+            dept_arr(idx).loc);
+    END LOOP;
+END;
+/
+CL SCR
+--COLLECTION METHOD
+DECLARE
+    TYPE ITAB_EX IS TABLE OF VARCHAR2(20)
+        INDEX BY PLS_INTEGER;
+
+    text_arr ITAB_EX;
+    
+BEGIN
+    text_arr(1)  := '1st data';
+    text_arr(2)  := '2nd data';
+    text_arr(3)  := '3rd data';
+    text_arr(50) := '50th data';
+
+    DBMS_OUTPUT.PUT_LINE('text_arr.COUNT : ' || text_arr.COUNT);
+    DBMS_OUTPUT.PUT_LINE('text_arr.FIRST : ' || text_arr.FIRST);
+    DBMS_OUTPUT.PUT_LINE('text_arr.LAST : ' || text_arr.LAST);
+    DBMS_OUTPUT.PUT_LINE('text_arr.PRIOR(50) : ' || text_arr.PRIOR(50));
+    DBMS_OUTPUT.PUT_LINE('text_arr.NEXT(50) : ' || text_arr.NEXT(50));
+    
+END;
+/
+
+--DELETE
+DECLARE
+    TYPE AV_TYPE IS TABLE OF VARCHAR2(40)
+        INDEX BY PLS_INTEGER;
+        --INDEX BY VARCHAR2(10);
+    
+    VAV_TEST AV_TYPE;
+    VN_CNT NUMBER := 0;
+
+BEGIN
+    VAV_TEST('A') := '값1';
+    VAV_TEST('B') := '값2';
+    VAV_TEST('C') := '값3';
+    
+    VN_CNT := VAV_TEST.COUNT;
+    
+    DBMS_OUTPUT.PUT_LINE('삭제 전 요소의 개수 : ' || VN_CNT);
+    
+    --DELETE 메서드로 요소 두 개 제거
+    VAV_TEST.DELETE('A','B');
+    
+    VN_CNT := VAV_TEST.COUNT;
+    
+    DBMS_OUTPUT.PUT_LINE('삭제 후 요소의 개수 : ' || VN_CNT);
+END;
+/
+CL SCR    
+--TRIM
+DECLARE
+    TYPE NT_TYPE IS TABLE OF VARCHAR2(10);
+        --INDEX BY VARCHAR2(10);
+    
+    VNT_TEST NT_TYPE;
+BEGIN
+    VNT_TEST := NT_TYPE('FIRST','SECOND','THIRD','FOURTH','FIFTH');
+    
+    VNT_TEST.TRIM(2);
+    
+    DBMS_OUTPUT.PUT_LINE(VNT_TEST(1));
+    DBMS_OUTPUT.PUT_LINE(VNT_TEST(2));
+    DBMS_OUTPUT.PUT_LINE(VNT_TEST(3));
+    DBMS_OUTPUT.PUT_LINE(VNT_TEST(4));
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+        DBMS_OUTPUT.PUT_LINE(DBMS_UTILITY.FORMAT_ERROR_BACKTRACE);
+END;
+/
