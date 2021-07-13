@@ -204,3 +204,54 @@ BEGIN
     END IF;
 END;
 /
+
+SELECT  *
+FROM    EMP;
+
+DESC    EMP;
+
+--18_Q1_LOOP
+DECLARE
+    v_emp_row EMP%ROWTYPE;
+
+CURSOR c1 IS
+    SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO
+    FROM   EMP;
+
+BEGIN
+OPEN c1;
+
+LOOP
+    FETCH c1 INTO v_emp_row;
+    
+    EXIT WHEN c1%NOTFOUND;
+    
+DBMS_OUTPUT.PUT_LINE('EMPNO : '    || v_emp_row.empno
+                 ||', ENAME : '    || v_emp_row.ename
+                 ||', JOB : '      || v_emp_row.job
+                 ||', SAL : '      || v_emp_row.sal
+                 ||', DEPTNO : '   || v_emp_row.deptno);
+END LOOP;
+
+CLOSE c1;
+END;
+/
+--18_Q1_FORLOOP
+DECLARE
+    --v_emp_row EMP%ROWTYPE; --필요 없음
+
+CURSOR c1 IS 
+SELECT  * -- * 사용 가능
+FROM    EMP;
+
+BEGIN
+    FOR c1_rec IN c1 LOOP
+        DBMS_OUTPUT.PUT_LINE('EMPNO : '  || c1_rec.EMPNO
+                         ||', ENAME : '  || c1_rec.ENAME
+                         ||', JOB : '    || c1_rec.JOB
+                         ||', SAL : '    || c1_rec.SAL
+                         ||', DEPTNO : ' || c1_rec.DEPTNO);
+    END LOOP;
+END;
+/
+CL SCR
