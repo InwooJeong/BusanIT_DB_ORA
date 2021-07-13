@@ -297,3 +297,8 @@ ON              customer(name);
 ALTER   INDEX   ix_cus REBUILD;
 
 DROP    INDEX   ix_cus;
+
+SELECT  *
+FROM    CUSTOMER;
+
+desc customer;

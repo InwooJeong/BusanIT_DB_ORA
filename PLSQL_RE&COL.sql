@@ -232,3 +232,72 @@ EXCEPTION
 END;
 /
 
+-------Q1
+CREATE  TABLE       EMP_RECORD
+AS      SELECT      *
+        FROM        EMP
+        WHERE       1=2; --테이블 구조만 복사
+
+SELECT      *
+FROM        EMP_RECORD; --확인
+
+DESC        EMP_RECORD;
+
+DECLARE
+    TYPE rec_emp IS RECORD( --타입 맞추기
+        empno       EMP.EMPNO%TYPE NOT NULL := 9999,
+        ename       EMP.ENAME%TYPE,
+        job         EMP.JOB%TYPE,
+        mgr         EMP.MGR%TYPE,
+        hiredate    EMP.HIREDATE%TYPE,
+        sal         EMP.SAL%TYPE,
+        comm        EMP.COMM%TYPE,
+        deptno      EMP.DEPTNO%TYPE
+    );
+    emp_rec rec_emp; --레코드 변수 이름 타입
+BEGIN    
+    emp_rec.empno    := 1111; --값 지정
+    emp_rec.ename    := 'TEST_USER';
+    emp_rec.job      := 'TEST_JOB';
+    emp_rec.mgr      := null;
+    emp_rec.hiredate := TO_DATE('2018/03/01', 'YYYY/MM/DD');
+    emp_rec.sal      := 3000;
+    emp_rec.comm     := null;
+    emp_rec.deptno   := 40;
+    
+INSERT  INTO    EMP_RECORD
+VALUES          emp_rec;
+END;
+/
+
+DECLARE
+    TYPE emp_list IS TABLE OF EMP%ROWTYPE --EMP 테이블 ROW TYPE과 같게
+        INDEX BY PLS_INTEGER;
+   
+    emp_arr emp_list;
+    idx PLS_INTEGER := 0;
+
+BEGIN
+    FOR i IN(SELECT * FROM EMP) LOOP --인덱스가지고 전체 조회(루프)
+        idx := idx+1;
+        emp_arr(idx).empno    := i.EMPNO;
+        emp_arr(idx).ename    := i.ENAME;
+        emp_arr(idx).job      := i.JOB;
+        emp_arr(idx).mgr      := i.MGR;
+        emp_arr(idx).hiredate := i.HIREDATE;
+        emp_arr(idx).sal      := i.SAL;
+        emp_arr(idx).comm     := i.COMM;
+        emp_arr(idx).deptno   := i.DEPTNO;
+        
+        DBMS_OUTPUT.PUT_LINE(
+            emp_arr(idx).empno    || ':' ||
+            emp_arr(idx).ename    || ':' ||
+            emp_arr(idx).job      || ':' ||
+            emp_arr(idx).mgr      || ':' ||
+            emp_arr(idx).hiredate || ':' ||
+            emp_arr(idx).sal      || ':' ||
+            emp_arr(idx).comm     || ':' ||
+            emp_arr(idx).deptno);
+    END LOOP;
+END;
+/
