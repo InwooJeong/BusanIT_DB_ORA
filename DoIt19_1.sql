@@ -1,60 +1,19 @@
-SET SERVEROUTPUT ON;
---파라미터를 사용하지 않는 프로시저
---CREAT [OR REPLACE] PROCEDURE 프로시저 이름 --뷰 처럼 존재시 대체(덮어 쓴다), 프로시저 이름은 같은 시키마 내에서 중복 불가
---IS || AS --DECLARE 사용X. 선언부가 없더라도 반드시 명시
---    선언부
---BEGIN
---    실행부
---EXCEPTION --생략 가능
---    예외 처리부
---END [프로시저 이름]; --생성 종료. 이름은 생략 가능    
+PL/SQL 블록 -> 작성한 내용을 단 한 번 실행 : 익명 블록(annoymous block)
+오라클에 저장되지 않기 때문에 한 번 실행한 뒤 다시 실행하려면 PL/SQL 블록을 다시 작성하여 실행해야 한다.
+(샐행 내용을 따로 sql파일에 저장하여 실행하기도 하지만 오라클에 저장되는 것은 아니다.)
 
-SELECT  *
-FROM    EMP;
+이를 주기적으로 또는 필요할 때 여러번 사용하기 위해 이름을 지정, 오라클에 저장해 두는 PL/SQL 프로그램
+: 저장 서브프로그램(stored subprogram)
+오라클에 저장하여 공유할 수 있으므로 메모리, 성능, 재사용성 좋다.
 
-CREATE OR REPLACE PROCEDURE     pro_noparam
-IS
-    V_EMPNO NUMBER(4) := 7839;
-    V_ENAME VARCHAR2(10);
-BEGIN
-    V_ENAME := 'KING';
-    DBMS_OUTPUT.PUT_LINE('V_EMPNO : ' || V_EMPNO);
-    DBMS_OUTPUT.PUT_LINE('V_ENAME : ' || V_ENAME);
-END;
-/
+                        익명 블록          저장 서브프로그램
+이름                   : 이름 없음       |  이름 지정
+오라클 저장             : 저장할 수 없음   | 저장
+컴파일                 : 실행 할 때 마다  |  저장할 때 한 번
+공유                   : 공유할 수 없음   |    공유 가능
+다른 응용 프로그램 호출  : 호출할 수 없음   |    호출 가능
 
-EXECUTE     pro_noparam; --SQL*PLUS에서 바로 사용 가능
-
-BEGIN --익명 블록(anonymous block)
-    pro_noparam;
-END;
-/
-
---이미 저장되어 있는 프로시저나 서브프로그램 소스 코드 내용을 확인하려면 USER_SOURCE 데이터 사전에서 조회
-SELECT      * 
-FROM        USER_SOURCE
-WHERE       NAME = 'PRO_NOPARAM';
-
-SELECT      TEXT
-FROM        USER_SOURCE
-WHERE       NAME = 'PRO_NOPARAM';
-
---삭제
-DROP PROCEDURE  PRO_NOPARAM;
-
-CL SCR
-
---파라미터를 사용하는 프로시저
-CREATE OR REPLACE PROCEDURE 프로시저 이름
-[(파라미터 이름1 [modes] 자료형 [ := | DEFAULT 기본값],
-  파라미터 이름2 [modes] 자료형 [ := | DEFAULT 기본값],
-  ....
-  파라미터 이름4 [modes] 자료형 [ := | DEFAULT 기본값]
-)]
-IS | AS
-    선언부
-BEGIN
-    실행부
-EXCEPTION
-    예외 처리부
-END [프로시저 이름];    
+프로시저 : 일반적으로 특정 처리 작업 수행을 위한 서브프로그램. SQL문에서는 사용 불가
+함수    : 일반적으로 특정 연산을 거친 결과 값을 반환하는 서브프로그램. SQL문에서 사용 가능
+패키지   : 저장 서브프로그램을 그룹화
+트리거   : 특정 상황(이벤트)이 발생할 때 자동으로 연달아 수행할 기능을 구현
