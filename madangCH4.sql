@@ -302,3 +302,17 @@ SELECT  *
 FROM    CUSTOMER;
 
 desc customer;
+
+SELECT      c.name, b.bookname, o.saleprice
+FROM        orders o, customer c, book b
+WHERE       o.custid(+) = c.custid
+AND         o.bookid = b.bookid(+);
+
+SELECT      c.name, count(distinct o.orderid)
+FROM        orders o, (SELECT   c.name, c.custid, o.saleprice, o.orderid
+                       FROM     customer c, orders o
+                       WHERE    c.custid = o.custid
+                       AND      o.saleprice >= 8000) c
+WHERE       o.custid = c.custid
+GROUP BY    c.name
+HAVING      count(distinct c.orderid)>=2;
