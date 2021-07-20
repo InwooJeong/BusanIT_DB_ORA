@@ -94,4 +94,30 @@ EXECUTE pro_param_in(param1 => 10, param2 => 20);
 --이름 지정 : => 연산자로 파라미터 이름을 명시하여 값을 지정
 --혼합 지정 : 일부 파라미터는 순서대로 값만 지정하고 일부 파라미터는 => 연산자로 값 지정
 
+--OUT 모드 파라미터 : 프로시저 실행 후 호출한 프로그램으로 값을 반환 : 호출할 때 값 반환
+CREATE OR REPLACE PROCEDURE     pro_param_out
+(
+    in_empno    IN   EMP.EMPNO%TYPE,
+    out_ename   OUT  EMP.ENAME%TYPE,
+    out_sal     OUT  EMP.SAL%TYPE
+)
+IS
 
+BEGIN
+    SELECT      ENAME, SAL  INTO    out_ename, out_sal
+    FROM        EMP
+    WHERE       EMPNO = in_empno;
+END  pro_param_out;
+/
+
+DECLARE
+    v_ename     EMP.ENAME%TYPE;
+    v_sal       EMP.SAL%TYPE;
+BEGIN
+    pro_param_out(7839, v_ename, v_sal);
+    DBMS_OUTPUT.PUT_LINE('ENAME : ' || v_ename);
+    DBMS_OUTPUT.PUT_LINE('SAL : '   || v_sal);
+END;
+/
+
+--IN OUT 모드 파라미터
