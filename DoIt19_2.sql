@@ -120,4 +120,47 @@ BEGIN
 END;
 /
 
---IN OUT 모드 파라미터
+--IN OUT 모드 파라미터 : 호출할 때 값을 입력받은 후 실행 결과 값을 반환 : IN,OUT으로 선언한 파라미터 기능을 동시에 수행
+--값을 입력받을 때와 프로시저 수행 후 결과 값을 반환할 때 사용
+CREATE OR REPLACE PROCEDURE pro_param_inout
+(
+    inout_no IN OUT NUMBER
+)
+IS
+
+BEGIN
+    inout_no := inout_no*2;
+END pro_param_inout;
+/
+
+DECLARE
+    no NUMBER;
+BEGIN
+    no := 5;
+    pro_param_inout(no);
+    DBMS_OUTPUT.PUT_LINE('no : ' || no);
+END;
+/
+
+--프로시저 오류 정보 확인
+CREATE OR REPLACE PROCEDURE pro_err
+IS
+    err_no NUMBER;
+BEGIN
+    err_no = 100;
+    DBMS_OUTPUT.PUT_LINE('err_no : ' || err_no);
+END pro_err;
+/
+
+--가장 최근에 생성되거나 변경된 서브프로그램 오류 정보를 출력
+SHOW ERRORS;
+
+CL SCR
+
+--SHOW ERR 프로그램 종류 프로그램 이름;
+SHOW ERR PROCEDURE pro_err;
+
+--USER_ERRORS 데이터 사전 조회
+SELECT      *
+FROM        USER_ERRORS
+WHERE       NAME = 'PRO_ERR';
