@@ -43,3 +43,6 @@ FROM        DUAL;
 
 SELECT      EMPNO, ENAME, SAL, func_aftertax(SAL) AS AFTERTAX
 FROM        EMP;
+
+--ªË¡¶
+DROP FUNCTION   func_aftertax;
