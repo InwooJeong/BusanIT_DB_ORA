@@ -34,3 +34,35 @@ DESC PKG_EXAMPLE;
 --    패키지 명세에서 선언한 서브프로그램을 포함, 여러 객체를 정의
 --    경우에 따라 패키지 명세에 존재하지 않는 객체 및 서브프로그램도 정의 가능
 --END [패키지 이름];    
+CREATE OR REPLACE PACKAGE BODY pkg_example
+IS
+    body_no NUMBER := 10; --pkg_example 안에서만 사용 가능
+    
+    FUNCTION func_aftertax(sal NUMBER) RETURN NUMBER
+        IS
+            tax NUMBER := 0.05;
+        BEGIN
+            RETURN (ROUND(sal - ( sal *  tax)));
+    END func_aftertax;
+    
+    PROCEDURE pro_emp(in_empno IN EMP.EMPNO%TYPE)
+        IS
+            out_ename EMP.ENAME%TYPE;
+            out_sal EMP.SAL%TYPE;
+        BEGIN
+            SELECT      ENAME, SAL  INTO out_name, out_sal
+            FROM        EMP
+            WHERE       EMPNO = in_empno;
+            
+            DBMS_OUTPUT.PUT_LINE('ENAME : ' || out_ename);
+            DBMS_OUTPUT.PUT_LINE('SAL : '   || out_sal);
+   END pro_emp;
+   
+   PROCEDURE pro_dept(in_deptno IN DEPT.DEPTNO%TYPE)
+    IS
+        out_dname   DEPT.DNAME%TYPE;
+        out_loc     DEPT.LOC%TYPE;
+    BEGIN
+        SELECT      DNAME, LOC  INTO out_dname, out_loc
+        FROM        DEPT
+        WHERE       DEPTNO = in_deptno;
