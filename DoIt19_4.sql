@@ -50,7 +50,7 @@ IS
             out_ename EMP.ENAME%TYPE;
             out_sal EMP.SAL%TYPE;
         BEGIN
-            SELECT      ENAME, SAL  INTO out_name, out_sal
+            SELECT      ENAME, SAL  INTO out_ename, out_sal
             FROM        EMP
             WHERE       EMPNO = in_empno;
             
@@ -66,3 +66,9 @@ IS
         SELECT      DNAME, LOC  INTO out_dname, out_loc
         FROM        DEPT
         WHERE       DEPTNO = in_deptno;
+        
+        DBMS_OUTPUT.PUT_LINE('DNAME : ' || out_dname);
+        DBMS_OUTPUT.PUT_LINE('LOC : '   || out_loc);
+    END pro_dept;
+END;
+/
